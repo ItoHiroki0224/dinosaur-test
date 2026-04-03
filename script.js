@@ -61,6 +61,21 @@ function showQuestion() {
 }
 
 nextBtn.onclick = () => {
+  if (!selectedType) {
+    alert("選択してください！");
+    return;
+  }
+
+  scores[selectedType]++; // ←ここで初めて加算
+
+  current++;
+
+  if (current < questions.length) {
+    showQuestion();
+  } else {
+    showResult();
+  }
+};
   current++;
   if (current < questions.length) showQuestion();
   else showResult();
@@ -120,4 +135,29 @@ function showResult() {
   resultEl.classList.remove("hidden");
 }
 
-showQuestion();
+let selectedType = null;
+
+function showQuestion() {
+  const q = questions[current];
+  questionEl.textContent = q.text;
+  choicesEl.innerHTML = "";
+  selectedType = null;
+
+  q.choices.forEach(choice => {
+    const btn = document.createElement("button");
+    btn.textContent = choice.text;
+
+    btn.onclick = () => {
+      // 全部のボタンの色をリセット
+      const buttons = choicesEl.querySelectorAll("button");
+      buttons.forEach(b => b.classList.remove("selected"));
+
+      // 選択したやつだけ赤くする
+      btn.classList.add("selected");
+
+      selectedType = choice.type;
+    };
+
+    choicesEl.appendChild(btn);
+  });
+}
